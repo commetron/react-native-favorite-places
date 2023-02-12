@@ -22,17 +22,17 @@ export default function ImagePicker({}: Props) {
       cameraPermissionInfo?.status === PermissionStatus.UNDETERMINED ||
       cameraPermissionInfo?.status === PermissionStatus.DENIED
     ) {
-      const response = await requestCameraPermission();
-      return response.granted;
+      if (cameraPermissionInfo.canAskAgain) {
+        const response = await requestCameraPermission();
+        return response.granted;
+      } else {
+        Alert.alert(
+          'Insufficient permissions!',
+          'You need to grant camera permissions to use this app.'
+        );
+        return false;
+      }
     }
-
-    // if (cameraPermissionInfo?.status === PermissionStatus.DENIED) {
-    //   Alert.alert(
-    //     'Insufficient permissions!',
-    //     'You need to grant camera permissions to use this app.'
-    //   );
-    //   return false;
-    // }
 
     return true;
   };
