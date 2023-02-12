@@ -18,18 +18,21 @@ export default function ImagePicker({}: Props) {
   const [pickedImage, setPickedImage] = useState<string | undefined>(undefined);
 
   const verifyCameraPermission = async () => {
-    if (cameraPermissionInfo?.status === PermissionStatus.UNDETERMINED) {
+    if (
+      cameraPermissionInfo?.status === PermissionStatus.UNDETERMINED ||
+      cameraPermissionInfo?.status === PermissionStatus.DENIED
+    ) {
       const response = await requestCameraPermission();
       return response.granted;
     }
 
-    if (cameraPermissionInfo?.status === PermissionStatus.DENIED) {
-      Alert.alert(
-        'Insufficient permissions!',
-        'You need to grant camera permissions to use this app.'
-      );
-      return false;
-    }
+    // if (cameraPermissionInfo?.status === PermissionStatus.DENIED) {
+    //   Alert.alert(
+    //     'Insufficient permissions!',
+    //     'You need to grant camera permissions to use this app.'
+    //   );
+    //   return false;
+    // }
 
     return true;
   };
@@ -47,7 +50,9 @@ export default function ImagePicker({}: Props) {
       quality: 0.5,
     });
 
-    setPickedImage(image.assets?.at(0)?.uri);
+    if (image != null && image.assets != null) {
+      setPickedImage(image.assets[0].uri);
+    }
   };
 
   let imagePreview = <Text>No image taken yet</Text>;
