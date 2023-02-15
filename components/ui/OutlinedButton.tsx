@@ -7,14 +7,23 @@ import { GlobalStyles } from '../../constants/styles';
 interface Props {
   children: ReactNode;
   icon: any;
+  disabled?: boolean;
   onPress: () => void;
 }
 
-export default function OutlinedButton({ children, icon, onPress }: Props) {
+export default function OutlinedButton({
+  children,
+  icon,
+  disabled = false,
+  onPress,
+}: Props) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-      onPress={onPress}
+      style={({ pressed }) => [
+        styles.button,
+        pressed && !disabled && styles.pressed,
+      ]}
+      onPress={!disabled ? onPress : undefined}
     >
       <Ionicons
         style={styles.icon}
@@ -22,7 +31,7 @@ export default function OutlinedButton({ children, icon, onPress }: Props) {
         size={18}
         color={GlobalStyles.colors.primary500}
       />
-      <Text style={styles.text}>{children}</Text>
+      <Text style={[styles.text]}>{children}</Text>
     </Pressable>
   );
 }

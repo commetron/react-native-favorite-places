@@ -1,11 +1,10 @@
 import {
-  ImagePickerResult,
   PermissionStatus,
   launchCameraAsync,
   useCameraPermissions,
 } from 'expo-image-picker';
 import React, { useState } from 'react';
-import { Alert, Button, Image, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, View } from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
 import OutlinedButton from '../ui/OutlinedButton';
@@ -81,6 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: GlobalStyles.colors.primary100,
     borderRadius: 4,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',

@@ -1,8 +1,10 @@
+import { getCurrentPositionAsync } from 'expo-location';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
 import ImagePicker from './ImagePicker';
+import LocationPicker from './LocationPicker';
 
 interface Props {}
 
@@ -25,6 +27,7 @@ export default function PlaceForm({}: Props) {
       </View>
 
       <ImagePicker />
+      <LocationPicker />
     </ScrollView>
   );
 }
