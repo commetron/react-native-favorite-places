@@ -1,16 +1,18 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import IconButton from './components/ui/IconButton';
 import { GlobalStyles } from './constants/styles';
 import AddPlace from './screens/AddPlace';
 import AllPlaces from './screens/AllPlaces';
+import Map from './screens/Map';
 
 export type StackNavParams = {
   AllPlaces: undefined;
-  AddPlace: undefined;
+  AddPlace: { pickedLocation?: { lat: number; lng: number } };
+  Map: undefined;
 };
 
 const StackNav = createNativeStackNavigator<StackNavParams>();
@@ -51,6 +53,13 @@ export default function App() {
             component={AddPlace}
             options={{
               title: 'Add a New Place',
+            }}
+          />
+          <StackNav.Screen
+            name='Map'
+            component={Map}
+            options={{
+              title: 'Map',
             }}
           />
         </StackNav.Navigator>

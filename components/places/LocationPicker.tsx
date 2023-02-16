@@ -1,23 +1,45 @@
 import {
+  RouteProp,
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
   PermissionStatus,
   getCurrentPositionAsync,
   useForegroundPermissions,
 } from 'expo-location';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, View } from 'react-native';
 
+import { StackNavParams } from '../../App';
 import { GlobalStyles } from '../../constants/styles';
 import { getMapPreview } from '../../util/location';
 import OutlinedButton from '../ui/OutlinedButton';
 
+type NavProps = NativeStackNavigationProp<StackNavParams>;
+type RouteProps = RouteProp<StackNavParams>;
+
 interface Props {}
 
 export default function LocationPicker({}: Props) {
+  const isFocused = useIsFocused();
+  const { navigate } = useNavigation<NavProps>();
+  const { params: routeParams } = useRoute<RouteProps>();
+
+  useEffect(() => {
+    if (routeParams?.pickedLocation) {
+      setPickedLocation(routeParams.pickedLocation);
+    }
+  }, [routeParams, isFocused]);
+
   const [locationPermissionInfo, requestLocationPermission] =
     useForegroundPermissions();
+
   const [isLoading, setIsLoading] = useState(false);
   const [pickedLocation, setPickedLocation] = useState<
-    { lon: number; lat: number } | undefined
+    { lat: number; lng: number } | undefined
   >(undefined);
 
   const verifyLocationPermission = async () => {
@@ -52,12 +74,14 @@ export default function LocationPicker({}: Props) {
     setIsLoading(false);
 
     setPickedLocation({
-      lon: location.coords.longitude,
       lat: location.coords.latitude,
+      lng: location.coords.longitude,
     });
   };
 
-  const pickOnMapHandler = () => {};
+  const pickOnMapHandler = () => {
+    navigate('Map');
+  };
 
   let locationPreview = <Text>No location picked yet.</Text>;
   if (isLoading) {
@@ -66,7 +90,7 @@ export default function LocationPicker({}: Props) {
     locationPreview = (
       <Image
         style={styles.image}
-        source={{ uri: getMapPreview(pickedLocation.lon, pickedLocation.lat) }}
+        source={{ uri: getMapPreview(pickedLocation.lat, pickedLocation.lng) }}
       />
     );
   }

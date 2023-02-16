@@ -1,10 +1,11 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { View } from 'react-native';
 
+import { StackNavParams } from '../App';
 import PlaceForm from '../components/places/PlaceForm';
 
-interface Props {}
+type ScreenProps = NativeStackScreenProps<StackNavParams>;
 
-export default function AddPlace({}: Props) {
+export default function AddPlace({}: ScreenProps) {
   return <PlaceForm />;
 }
