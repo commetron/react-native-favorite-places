@@ -1,15 +1,28 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
+import { StackNavParams } from '../../App';
 import { GlobalStyles } from '../../constants/styles';
 import { Place } from '../../types/places';
 import PlaceItem from './PlaceItem';
+
+type NavProps = NativeStackNavigationProp<StackNavParams, 'PlaceDetails'>;
 
 interface Props {
   places: Place[];
 }
 
 export default function PlacesList({ places }: Props) {
+  const { navigate } = useNavigation<NavProps>();
+
+  const selectPlaceHandler = (id: string) => {
+    navigate('PlaceDetails', {
+      id,
+    });
+  };
+
   if (places.length === 0) {
     return (
       <View style={styles.fallbackContainer}>
@@ -25,7 +38,9 @@ export default function PlacesList({ places }: Props) {
       style={styles.list}
       data={places}
       keyExtractor={(el) => el.id}
-      renderItem={(el) => <PlaceItem place={el.item} onSelect={() => {}} />}
+      renderItem={(el) => (
+        <PlaceItem place={el.item} onSelect={selectPlaceHandler} />
+      )}
     />
   );
 }

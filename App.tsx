@@ -1,6 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
 import IconButton from './components/ui/IconButton';
@@ -8,17 +10,53 @@ import { GlobalStyles } from './constants/styles';
 import AddPlace from './screens/AddPlace';
 import AllPlaces from './screens/AllPlaces';
 import Map from './screens/Map';
-import { Place } from './types/places';
+import PlaceDetails from './screens/PlaceDetails';
+import { GeoPoint } from './types/places';
+import { init } from './util/database';
+
+SplashScreen.preventAutoHideAsync();
 
 export type StackNavParams = {
-  AllPlaces: { place: Place };
+  AllPlaces: undefined;
+  PlaceDetails: { id: string };
   AddPlace: { pickedLocation?: { lat: number; lng: number } };
-  Map: undefined;
+  Map: {
+    location?: GeoPoint;
+  };
 };
 
 const StackNav = createNativeStackNavigator<StackNavParams>();
 
 export default function App() {
+  const [dbInitialized, setDbInitialized] = useState(false);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await init();
+      } catch (error) {
+        console.error(error);
+      }
+      setDbInitialized(true);
+    };
+
+    initialize();
+  }, []);
+
+  useEffect(() => {
+    const hideSplashScreen = async () => {
+      await SplashScreen.hideAsync();
+    };
+
+    if (dbInitialized) {
+      hideSplashScreen();
+    }
+  }, [dbInitialized]);
+
+  if (!dbInitialized) {
+    return null;
+  }
+
   return (
     <>
       <StatusBar />
@@ -48,6 +86,13 @@ export default function App() {
                 />
               ),
             })}
+          />
+          <StackNav.Screen
+            name='PlaceDetails'
+            component={PlaceDetails}
+            options={{
+              title: 'Details',
+            }}
           />
           <StackNav.Screen
             name='AddPlace'

@@ -9,19 +9,25 @@ import { GeoPoint } from '../types/places';
 
 type ScreenProps = NativeStackScreenProps<StackNavParams, 'Map'>;
 
-export default function Map({ navigation }: ScreenProps) {
+export default function Map({ route, navigation }: ScreenProps) {
+  const initialLocation = route.params.location;
+
   const [selectedLocation, setSelectedLocation] = useState<
     GeoPoint | undefined
-  >(undefined);
+  >(initialLocation);
 
   const region: Region = {
-    latitude: 37.78,
-    longitude: -122.43,
+    latitude: initialLocation ? initialLocation.lat : 37.78,
+    longitude: initialLocation ? initialLocation.lng : -122.43,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
 
   const selectLocationHandler = (event: MapPressEvent) => {
+    if (initialLocation) {
+      return;
+    }
+
     const { latitude, longitude } = event.nativeEvent.coordinate;
     setSelectedLocation({ lat: latitude, lng: longitude });
   };
@@ -41,6 +47,10 @@ export default function Map({ navigation }: ScreenProps) {
   }, [navigation, selectedLocation]);
 
   useLayoutEffect(() => {
+    if (initialLocation) {
+      return;
+    }
+
     navigation.setOptions({
       headerRight: ({ tintColor }) => (
         <IconButton
@@ -51,7 +61,7 @@ export default function Map({ navigation }: ScreenProps) {
         />
       ),
     });
-  }, [navigation, savePickedLocationHandler]);
+  }, [initialLocation, navigation, savePickedLocationHandler]);
 
   return (
     <MapView

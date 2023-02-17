@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { StackNavParams } from '../App';
 import PlacesList from '../components/places/PlacesList';
 import { Place } from '../types/places';
+import { fetchPlaces } from '../util/database';
 
 type ScreenProps = NativeStackScreenProps<StackNavParams, 'AllPlaces'>;
 
@@ -13,12 +14,17 @@ export default function AllPlaces({ route }: ScreenProps) {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (!isFocused || !route.params) {
+    const loadPlaces = async () => {
+      const places = await fetchPlaces();
+      setLoadedPlaces(places);
+    };
+
+    if (!isFocused) {
       return;
     }
 
-    setLoadedPlaces((preState) => [route.params.place, ...preState]);
-  }, [isFocused, route]);
+    loadPlaces();
+  }, [isFocused]);
 
   return <PlacesList places={loadedPlaces} />;
 }

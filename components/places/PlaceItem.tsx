@@ -6,16 +6,16 @@ import { Place } from '../../types/places';
 
 interface Props {
   place: Place;
-  onSelect: () => void;
+  onSelect: (id: string) => void;
 }
 
 export default function PlaceItem({ place, onSelect }: Props) {
-  const { imageUri, title, address } = place;
+  const { id, imageUri, title, address } = place;
 
   return (
     <Pressable
       style={({ pressed }) => [styles.item, pressed && styles.pressed]}
-      onPress={onSelect}
+      onPress={() => onSelect(id)}
     >
       <Image style={styles.image} source={{ uri: imageUri }} />
       <View style={styles.info}>
