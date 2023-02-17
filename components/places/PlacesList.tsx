@@ -22,6 +22,7 @@ export default function PlacesList({ places }: Props) {
 
   return (
     <FlatList
+      style={styles.list}
       data={places}
       keyExtractor={(el) => el.id}
       renderItem={(el) => <PlaceItem place={el.item} onSelect={() => {}} />}
@@ -30,6 +31,9 @@ export default function PlacesList({ places }: Props) {
 }
 
 const styles = StyleSheet.create({
+  list: {
+    margin: 24,
+  },
   fallbackContainer: {
     flex: 1,
     justifyContent: 'center',

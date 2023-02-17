@@ -15,15 +15,18 @@ import { Alert, Image, StyleSheet, Text, View } from 'react-native';
 
 import { StackNavParams } from '../../App';
 import { GlobalStyles } from '../../constants/styles';
-import { getMapPreview } from '../../util/location';
+import { GeoPoint } from '../../types/places';
+import { getAddress, getMapPreview } from '../../util/location';
 import OutlinedButton from '../ui/OutlinedButton';
 
 type NavProps = NativeStackNavigationProp<StackNavParams>;
-type RouteProps = RouteProp<StackNavParams>;
+type RouteProps = RouteProp<StackNavParams, 'AddPlace'>;
 
-interface Props {}
+interface Props {
+  onPickLocation: (location: { point: GeoPoint; address?: string }) => void;
+}
 
-export default function LocationPicker({}: Props) {
+export default function LocationPicker({ onPickLocation }: Props) {
   const isFocused = useIsFocused();
   const { navigate } = useNavigation<NavProps>();
   const { params: routeParams } = useRoute<RouteProps>();
@@ -38,9 +41,22 @@ export default function LocationPicker({}: Props) {
     useForegroundPermissions();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [pickedLocation, setPickedLocation] = useState<
-    { lat: number; lng: number } | undefined
-  >(undefined);
+  const [pickedLocation, setPickedLocation] = useState<GeoPoint | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    const handleLocation = async () => {
+      if (!pickedLocation) {
+        return;
+      }
+
+      const address = await getAddress(pickedLocation.lat, pickedLocation.lng);
+      onPickLocation({ point: pickedLocation, address });
+    };
+
+    handleLocation();
+  }, [pickedLocation, onPickLocation]);
 
   const verifyLocationPermission = async () => {
     if (

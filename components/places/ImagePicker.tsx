@@ -3,18 +3,26 @@ import {
   launchCameraAsync,
   useCameraPermissions,
 } from 'expo-image-picker';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, View } from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
 import OutlinedButton from '../ui/OutlinedButton';
 
-interface Props {}
+interface Props {
+  onTakeImage: (imageUri: string) => void;
+}
 
-export default function ImagePicker({}: Props) {
+export default function ImagePicker({ onTakeImage }: Props) {
   const [cameraPermissionInfo, requestCameraPermission] =
     useCameraPermissions();
   const [pickedImage, setPickedImage] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (pickedImage) {
+      onTakeImage(pickedImage);
+    }
+  }, [pickedImage, onTakeImage]);
 
   const verifyCameraPermission = async () => {
     if (

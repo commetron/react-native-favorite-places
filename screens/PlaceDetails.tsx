@@ -1,8 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
 
-interface Props {}
-
-export default function PlaceDetails({}: Props) {
+export default function PlaceDetails() {
   return <View></View>;
 }

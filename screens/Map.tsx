@@ -5,12 +5,13 @@ import MapView, { MapPressEvent, Marker, Region } from 'react-native-maps';
 
 import { StackNavParams } from '../App';
 import IconButton from '../components/ui/IconButton';
+import { GeoPoint } from '../types/places';
 
-type ScreenProps = NativeStackScreenProps<StackNavParams>;
+type ScreenProps = NativeStackScreenProps<StackNavParams, 'Map'>;
 
 export default function Map({ navigation }: ScreenProps) {
   const [selectedLocation, setSelectedLocation] = useState<
-    { lat: number; lng: number } | undefined
+    GeoPoint | undefined
   >(undefined);
 
   const region: Region = {

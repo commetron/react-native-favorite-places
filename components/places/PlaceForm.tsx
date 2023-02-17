@@ -1,18 +1,58 @@
 import { getCurrentPositionAsync } from 'expo-location';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
+import { GeoPoint, Place } from '../../types/places';
+import Button from '../ui/Button';
 import ImagePicker from './ImagePicker';
 import LocationPicker from './LocationPicker';
 
-interface Props {}
+interface Props {
+  onCreatePlace: (place: Place) => void;
+}
 
-export default function PlaceForm({}: Props) {
+export default function PlaceForm({ onCreatePlace }: Props) {
   const [enteredTitle, setEnteredTitle] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | undefined>();
+  const [pickedLocation, setPickedLocation] = useState<
+    { lat: number; lng: number; address?: string } | undefined
+  >();
+  const [pickedLocationAddress, setPickedLocationAddress] = useState<
+    string | undefined
+  >();
 
   const changeTitleHandler = (title: string) => {
     setEnteredTitle(title);
+  };
+
+  const takeImageHandler = useCallback((imageUri: string) => {
+    setSelectedImage(imageUri);
+  }, []);
+
+  const pickLocationHandler = useCallback(
+    (location: { point: GeoPoint; address?: string }) => {
+      setPickedLocation(location.point);
+      setPickedLocationAddress(location.address);
+    },
+    []
+  );
+
+  const savePlaceHandler = () => {
+    if (!pickedLocation) {
+      return;
+    }
+
+    onCreatePlace({
+      id: `${new Date().getTime()}`,
+      title: enteredTitle,
+      imageUri: selectedImage ?? '',
+      address: pickedLocationAddress ?? '',
+      location: {
+        lat: pickedLocation.lat,
+        lng: pickedLocation.lng,
+      },
+    });
   };
 
   return (
@@ -26,8 +66,10 @@ export default function PlaceForm({}: Props) {
         />
       </View>
 
-      <ImagePicker />
-      <LocationPicker />
+      <ImagePicker onTakeImage={takeImageHandler} />
+      <LocationPicker onPickLocation={pickLocationHandler} />
+
+      <Button onPress={savePlaceHandler}>Add Place</Button>
     </ScrollView>
   );
 }

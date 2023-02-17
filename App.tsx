@@ -8,9 +8,10 @@ import { GlobalStyles } from './constants/styles';
 import AddPlace from './screens/AddPlace';
 import AllPlaces from './screens/AllPlaces';
 import Map from './screens/Map';
+import { Place } from './types/places';
 
 export type StackNavParams = {
-  AllPlaces: undefined;
+  AllPlaces: { place: Place };
   AddPlace: { pickedLocation?: { lat: number; lng: number } };
   Map: undefined;
 };
